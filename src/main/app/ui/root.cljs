@@ -145,20 +145,23 @@
   (div :.ui.container.segment
     (h3 "Main")))
 
-;; TODO display only when user is logged in
-(defsc RobohashImage [this {:account/keys [email] :as props}]
+(defsc RobohashImage [this {:keys [:account/email] :as props}]
        {:query         [:account/email
                          {[:component/id :session] (comp/get-query Session)}]
         :initial-state {:account/email " "}
         :ident         (fn [] [:component/id :useremail])}
-       (let [{current-user :account/name} (get props [:component/id :session])
+       (let [current-state (uism/get-active-state this ::session/session)
+             logged-in?    (= :state/logged-in current-state)
+             {current-user :account/name} (get props [:component/id :session])
              robohash-image-url (str "https://robohash.org/"  current-user "?set=" "set5")]
+            (if logged-in?
             (dom/div
               :.ui.card
               (dom/div :.image (dom/img {:src robohash-image-url}))
               (dom/div
                 :.content
-                (dom/div :.header current-user)))))
+                (dom/div :.header current-user)))
+            (dom/div :.ui.card "Please LogIn to view your RoboHash image!"))))
 
 (def ui-robohash-image (prim/factory RobohashImage))
 

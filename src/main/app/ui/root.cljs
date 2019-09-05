@@ -145,14 +145,45 @@
   (div :.ui.container.segment
     (h3 "Main")))
 
-(defsc Settings [this {:keys [:account/time-zone :account/real-name] :as props}]
-  {:query         [:account/time-zone :account/real-name]
-   :ident         (fn [] [:component/id :settings])
-   :route-segment ["settings"]
-   :will-enter    (fn [_ _] (dr/route-immediate [:component/id :settings]))
-   :initial-state {}}
-  (div :.ui.container.segment
-    (h3 "Settings")))
+(defsc UserEmail [this {:account/keys [email] :as props}]
+       {:query         [:account/email
+                        {[:component/id :session] (comp/get-query Session)}]
+        :initial-state {:account/email ""}
+        :ident         (fn [] [:component/id :useremail])}
+       (let [{current-user :account/name} (get props [:component/id :session])]
+              [current-user]))
+
+(def ui-user-email (comp/factory UserEmail))
+
+;; TODO display only when user is logged in
+(defsc RobohashComponent [this {:keys [:robohash/name :robohash/type] :as props}]
+       {:query [:robohash/name :robohash/type]
+        :initial-state {:robohash/name ""
+                        :robohash/type "set1"}}
+       (let [robohash-image-url (str "https://robohash.org/"  name "?set=" type) ]
+            (js/console.log "ROBOHASH COMPONENT : " robohash-image-url)
+            (dom/div
+              :.ui.card
+              (dom/div :.image (dom/img {:src robohash-image-url}))
+              (dom/div
+                :.content
+                (dom/div :.header name)))))
+
+(def ui-robohash-component (prim/factory RobohashComponent))
+
+(defsc Settings [this {:keys [:account/time-zone :account/real-name :root/useremail] :as props}]
+       {:query         [:account/time-zone :account/real-name
+                        {:root/useremail (comp/get-query UserEmail)}]
+        :ident         (fn [] [:component/id :settings])
+        :route-segment ["settings"]
+        :will-enter    (fn [_ _] (dr/route-immediate [:component/id :settings]))
+        :initial-state {:root/useremail {}}}
+       (js/console.log "SETTINGS " (ui-user-email useremail) )
+       (js/console.log "SETTINGS " useremail )
+       (div
+         (div :.ui.container.segment (h3 "Settings"))
+         (ui-robohash-component {:robohash/name (ui-user-email useremail) :robohash/type "set5"})
+         (ui-user-email useremail)))
 
 (dr/defrouter TopRouter [this props]
   {:router-targets [Main Signup SignupSuccess Settings]})

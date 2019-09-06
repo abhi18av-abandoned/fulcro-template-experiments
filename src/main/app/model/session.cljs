@@ -121,3 +121,16 @@
       (boolean (and (valid-email? email) (valid-password? password)
                  (= password password-again))))))
 
+
+
+(defmutation update-email! [_]
+  (action [{:keys [state]}]
+          (log/info "Updating Email")
+          (swap! state fs/mark-complete* signup-ident))
+  #_(ok-action [{:keys [app state]}]
+             (dr/change-route app ["signup-success"]))
+  #_(remote [{:keys [state] :as env}]
+          (let [{:account/keys [email password password-again]} (get-in @state signup-ident)]
+            (boolean (and (valid-email? email) (valid-password? password)
+                          (= password password-again))))))
+

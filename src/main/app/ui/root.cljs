@@ -153,7 +153,12 @@
        (let [current-state (uism/get-active-state this ::session/session)
              logged-in?    (= :state/logged-in current-state)
              {current-user :account/name} (get props [:component/id :session])
-             robohash-image-url (str "https://robohash.org/"  current-user "?set=" "set5")]
+             robohash-image-url (str "https://robohash.org/"  current-user "?set=" "set5")
+             submit!  (fn [evt]
+                        (when (evt/enter-key? evt)
+                          ;; TODO configure the call site for update-email! correctly
+                          (comp/transact! this [(session/update-email! {})])
+                          (log/info "Email change and generate new RoboHash image")))]
             (if logged-in?
             (dom/div
               :.ui.card
@@ -171,7 +176,7 @@
                     (dom/label "New Email")
                     (dom/input
                       {:type "text"}))))
-              (dom/button :.ui.button.primary {:type "submit"} "Update my email (and RoboHash!)"))
+              (dom/button :.ui.primary.button {:onClick #(submit! true)} "Update Email and RoboHash!"))
             (dom/div :.ui.card "Please LogIn to view your RoboHash image!"))))
 
 (def ui-robohash-image (prim/factory RobohashImage))

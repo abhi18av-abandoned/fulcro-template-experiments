@@ -160,7 +160,18 @@
               (dom/div :.image (dom/img {:src robohash-image-url}))
               (dom/div
                 :.content
-                (dom/div :.header current-user)))
+                (dom/div :.ui.field.header
+                         (dom/label "Current Email: "
+                                    (dom/div current-user)))
+                (dom/hr)
+                (dom/div
+                  :.ui.form
+                  (dom/div
+                    :.ui.field.header
+                    (dom/label "New Email")
+                    (dom/input
+                      {:type "text"}))))
+              (dom/button :.ui.button.primary {:type "submit"} "Update my email (and RoboHash!)"))
             (dom/div :.ui.card "Please LogIn to view your RoboHash image!"))))
 
 (def ui-robohash-image (prim/factory RobohashImage))

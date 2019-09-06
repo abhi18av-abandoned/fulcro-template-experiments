@@ -123,10 +123,10 @@
 
 (defmutation update-email! [_]
   (action [{:keys [state]}]
-          (log/info "Updating Email")
-          #_(swap! state fs/mark-complete* [:component/id :signup]))
+          (log/info "mutation: Updating Email")
+          (swap! state fs/mark-complete* [:component/id :robohash]))
   (ok-action [{:keys [app state]}]
-             (log/info "Updating Email => ok-action"))
+             (log/info "mutation: Updating Email => ok-action"))
   #_(remote [{:keys [state] :as env}]
           (log/info "Updating Email => remote" )))
 

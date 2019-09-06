@@ -147,11 +147,12 @@
 
 (defsc RobohashImage [this {:keys [:account/email] :as props}]
        {:query         [:account/email
-                         {[:component/id :session] (comp/get-query Session)}]
+                        fs/form-config-join
+                        {[:component/id :session] (comp/get-query Session)}]
         :initial-state (fn [_]
                           (fs/add-form-config RobohashImage
                                               {:account/email          ""}))
-        :ident         (fn [] [:component/id :useremail])
+        :ident         (fn [] [:component/id :robohash])
         :form-fields       #{:account/email}
         :will-enter    (fn [_ _] (dr/route-immediate [:component/id :settings]))}
        (let [current-state (uism/get-active-state this ::session/session)

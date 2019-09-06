@@ -148,8 +148,13 @@
 (defsc RobohashImage [this {:keys [:account/email] :as props}]
        {:query         [:account/email
                          {[:component/id :session] (comp/get-query Session)}]
-        :initial-state {:account/email " "}
-        :ident         (fn [] [:component/id :useremail])}
+        :initial-state (fn [_]
+                          (fs/add-form-config Signup
+                                              {:account/email          ""
+                                               :account/password       ""
+                                               :account/password-again ""}))
+        :ident         (fn [] [:component/id :useremail])
+        :form-fields       #{:account/email}}
        (let [current-state (uism/get-active-state this ::session/session)
              logged-in?    (= :state/logged-in current-state)
              {current-user :account/name} (get props [:component/id :session])
@@ -157,7 +162,7 @@
              submit!  (fn [evt]
                         (when (evt/enter-key? evt)
                           ;; TODO configure the call site for update-email! correctly
-                          (comp/transact! this [(session/update-email! {})])
+                          (comp/transact! this [(session/update-email! {:email current-user})])
                           (log/info "Email change and generate new RoboHash image")))]
             (if logged-in?
             (dom/div

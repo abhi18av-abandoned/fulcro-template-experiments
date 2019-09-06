@@ -127,6 +127,6 @@
           #_(swap! state fs/mark-complete* [:component/id :signup]))
   (ok-action [{:keys [app state]}]
              (log/info "Updating Email => ok-action"))
-  (remote [{:keys [state] :as env}]
+  #_(remote [{:keys [state] :as env}]
           (log/info "Updating Email => remote" )))
 

@@ -149,12 +149,11 @@
        {:query         [:account/email
                          {[:component/id :session] (comp/get-query Session)}]
         :initial-state (fn [_]
-                          (fs/add-form-config Signup
-                                              {:account/email          ""
-                                               :account/password       ""
-                                               :account/password-again ""}))
+                          (fs/add-form-config RobohashImage
+                                              {:account/email          ""}))
         :ident         (fn [] [:component/id :useremail])
-        :form-fields       #{:account/email}}
+        :form-fields       #{:account/email}
+        :will-enter    (fn [_ _] (dr/route-immediate [:component/id :settings]))}
        (let [current-state (uism/get-active-state this ::session/session)
              logged-in?    (= :state/logged-in current-state)
              {current-user :account/name} (get props [:component/id :session])
@@ -176,11 +175,13 @@
                 (dom/hr)
                 (dom/div
                   :.ui.form
-                  (dom/div
-                    :.ui.field.header
-                    (dom/label "New Email")
-                    (dom/input
-                      {:type "text"}))))
+                  (field {:label         "New Email"
+                          :value         (or email "")
+                          :valid?        (session/valid-email? email)
+                          :error-message "Must be an email address"
+                          :autoComplete  "off"
+                          :onKeyDown     submit!
+                          :onChange      #(m/set-string! this :account/email :event %)})))
               (dom/button :.ui.primary.button {:onClick #(submit! true)} "Update Email and RoboHash!"))
             (dom/div :.ui.card "Please LogIn to view your RoboHash image!"))))
 

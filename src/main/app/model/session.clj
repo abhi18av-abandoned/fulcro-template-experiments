@@ -52,4 +52,25 @@
                                        :password password})
   {:signup/result "OK"})
 
-(def resolvers [current-session-resolver login logout signup!])
+(defmutation update-email! [env {:keys [email password]}]
+  {::pc/output [:robohash/result]}
+  (swap! account-database assoc-in [email :email] email)
+  {:robohash/result "OK"})
+
+(def resolvers [current-session-resolver login logout signup! update-email!])
+
+
+;;;;;;;;;
+
+(comment
+  (reset! account-database {})
+
+  (swap! account-database assoc "abhi18av@outlook.com"  {:email "abhi18av@outlook.com"  :password "password"})
+
+  (swap! account-database assoc-in ["abhi18av@outlook.com" :email] "abhi18av@yahoo.com")
+
+  (swap! account-database dissoc "abhi18av@outlook.com"  {:email "new email"  :password "password"}))
+
+
+
+

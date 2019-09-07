@@ -121,12 +121,35 @@
       (boolean (and (valid-email? email) (valid-password? password)
                  (= password password-again))))))
 
+
+(def robohash-ident [:component/id :robohash])
+(defn robohash-class [] (comp/registry-key->class :app.ui.root/RobohashImage))
+
+(defn clear-robohash-form*
+  "Mutation helper: Updates state map with a cleared robohash form that is configured for form state support."
+  [state-map]
+  (-> state-map
+      (assoc-in robohash-ident
+                {:account/email ""})
+      (fs/add-form-config* (robohash-class) robohash-ident)))
+
+(defmutation clear-robohash-form [_]
+  (action [{:keys [state]}]
+          (swap! state clear-robohash-form*)))
+
 (defmutation update-email! [_]
   (action [{:keys [state]}]
-          (log/info "mutation: Updating Email")
-          (swap! state fs/mark-complete* [:component/id :robohash]))
-  (ok-action [{:keys [app state]}]
+          (log/info "mutation: update-email! action")
+          #_(swap! state fs/mark-complete* [:component/id :robohash]))
+  (action-result [{:keys [state]}]
+                 (log/info "mutation: update-email action-result")
+                 #_(swap! state fs/mark-complete* [:component/id :robohash]))
+  #_(ok-action [{:keys [this state]}]
              (log/info "mutation: Updating Email => ok-action"))
-  #_(remote [{:keys [state] :as env}]
-          (log/info "Updating Email => remote" )))
+  (remote [{:keys [state] :as env}]
+          (let [{:account/keys [email]} (get-in @state robohash-ident)]
+            (valid-email? email))))
 
+(comment
+  (comp/transact! SPA [(make-older {:person/id 2})])
+  )

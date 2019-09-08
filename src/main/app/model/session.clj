@@ -50,11 +50,14 @@
   {::pc/output [:signup/result]}
   (swap! account-database assoc email {:email    email
                                        :password password})
-  {:signup/result "Server OK"})
+  {:signup/result "OK"})
 
-(defmutation update-email! [env {:keys [email]}]
+(defmutation update-email! [env {:keys [new-email current-email]}]
   {::pc/output [:robohash/result]}
-  (swap! account-database assoc-in [email :email] email)
+  (reset! account-database
+          {new-email
+           {:email new-email
+            :password (get-in @account-database [current-email :password])}})
   {:robohash/result "OK"})
 
 (def resolvers [current-session-resolver login logout signup! update-email!])
@@ -69,6 +72,14 @@
 
   (swap! account-database assoc-in ["abhi18av@outlook.com" :email] "abhi18av@yahoo.com")
 
+  (reset! account-database
+          {"abhi18av@yahoo.com"
+           {;; email from new email
+            :email "abhi18av@yahoo.com"
+            ;; password from previous db
+            :password "password"}})
+
+  (get-in @account-database ["abhi18av@outlook.com" :password])
 
   (swap! account-database dissoc "abhi18av@gmail.com"  {:email "abhi18av@gmail.com"  :password "password"})
 

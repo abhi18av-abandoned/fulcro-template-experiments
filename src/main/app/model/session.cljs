@@ -113,12 +113,12 @@
 (defmutation signup! [_]
   (action [{:keys [state]}]
           (log/info "mutation: signup! action ")
-          #_(swap! state fs/mark-complete* signup-ident))
-  #_(ok-action [{:keys [app state]}]
+          (swap! state fs/mark-complete* signup-ident))
+  (ok-action [{:keys [app state]}]
                (log/info "mutation: signup! ok-action ")
                (dr/change-route app ["signup-success"]))
-  #_(remote [{:keys [state] :as env}]
-    (let [{:account/keys [email password password-again]} (get-in @state signup-ident)]
+  (remote [{:keys [state] :as env}]
+          (let [{:account/keys [email password password-again]} (get-in @state signup-ident)]
       (boolean (and (valid-email? email) (valid-password? password)
                  (= password password-again))))))
 
@@ -141,14 +141,11 @@
 (defmutation update-email! [_]
   (action [{:keys [state]}]
           (log/info "mutation: update-email! action")
-          #_(swap! state fs/mark-complete* [:component/id :robohash]))
-  #_(action-result [{:keys [state]}]
-                   (log/info "mutation: update-email action-result")
-                   #_(swap! state fs/mark-complete* [:component/id :robohash]))
-  #_(ok-action [{:keys [this state]}]
+          (swap! state fs/mark-complete* [:component/id :robohash]))
+  (ok-action [{:keys [this state]}]
              (log/info "mutation: Updating Email => ok-action"))
-  #_(remote [{:keys [state] :as env}]
-            (let [{:account/keys [email]} (get-in @state robohash-ident)]
+  (remote [{:keys [state] :as env}]
+          (let [{:account/keys [email]} (get-in @state robohash-ident)]
             (valid-email? email))))
 
 (comment

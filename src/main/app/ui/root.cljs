@@ -162,7 +162,7 @@
              robohash-image-url (str "https://robohash.org/"  current-user "?set=" "set5")
              submit!  (fn [evt]
                         (when (evt/enter-key? evt)
-                          (comp/transact! this [(session/update-email! {:email email})])
+                          (comp/transact! this [(session/update-email! {:new-email email :current-email current-user})])
                           (log/info "Robohash submit! triggered")))
              checked? (log/spy :info (fs/checked? props))]
             (if logged-in?
@@ -179,14 +179,14 @@
                   :.ui.form {:classes [(when checked? "error")]}
                   (field {:label         "New Email"
                           :placeholder   "me@domain.xyz"
-                          #_#_:value (or email "")
-                          :value         "abhi18av@yahoo.com"
+                          :value         (or email "")
+                          #_#_:value "abhi18av@yahoo.com"
                           :valid?        (session/valid-email? email)
                           :error-message "Must be an email address"
                           :autoComplete  "off"
                           :onKeyDown     submit!
                           :onChange      #(m/set-string! this :account/email :event %)})))
-              (dom/button :.ui.primary.button {:onClick #(submit! true)} "New Email => New RoboHash!"))
+              #_(dom/button :.ui.primary.button {:onClick #(submit! true)} "New Email => New RoboHash!"))
             (dom/div :.ui.card "Please LogIn to view your RoboHash image!"))))
 
 (def ui-robohash-image (prim/factory RobohashImage))

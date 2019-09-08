@@ -50,9 +50,9 @@
   {::pc/output [:signup/result]}
   (swap! account-database assoc email {:email    email
                                        :password password})
-  {:signup/result "OK"})
+  {:signup/result "Server OK"})
 
-(defmutation update-email! [env {:keys [email password]}]
+(defmutation update-email! [env {:keys [email]}]
   {::pc/output [:robohash/result]}
   (swap! account-database assoc-in [email :email] email)
   {:robohash/result "OK"})
@@ -68,6 +68,9 @@
   (swap! account-database assoc "abhi18av@outlook.com"  {:email "abhi18av@outlook.com"  :password "password"})
 
   (swap! account-database assoc-in ["abhi18av@outlook.com" :email] "abhi18av@yahoo.com")
+
+
+  (swap! account-database dissoc "abhi18av@gmail.com"  {:email "abhi18av@gmail.com"  :password "password"})
 
   (swap! account-database dissoc "abhi18av@outlook.com"  {:email "new email"  :password "password"}))
 

@@ -112,11 +112,12 @@
 
 (defmutation signup! [_]
   (action [{:keys [state]}]
-    (log/info "Marking complete")
-    (swap! state fs/mark-complete* signup-ident))
-  (ok-action [{:keys [app state]}]
-    (dr/change-route app ["signup-success"]))
-  (remote [{:keys [state] :as env}]
+          (log/info "mutation: signup! action ")
+          #_(swap! state fs/mark-complete* signup-ident))
+  #_(ok-action [{:keys [app state]}]
+               (log/info "mutation: signup! ok-action ")
+               (dr/change-route app ["signup-success"]))
+  #_(remote [{:keys [state] :as env}]
     (let [{:account/keys [email password password-again]} (get-in @state signup-ident)]
       (boolean (and (valid-email? email) (valid-password? password)
                  (= password password-again))))))
@@ -141,15 +142,18 @@
   (action [{:keys [state]}]
           (log/info "mutation: update-email! action")
           #_(swap! state fs/mark-complete* [:component/id :robohash]))
-  (action-result [{:keys [state]}]
-                 (log/info "mutation: update-email action-result")
-                 #_(swap! state fs/mark-complete* [:component/id :robohash]))
+  #_(action-result [{:keys [state]}]
+                   (log/info "mutation: update-email action-result")
+                   #_(swap! state fs/mark-complete* [:component/id :robohash]))
   #_(ok-action [{:keys [this state]}]
              (log/info "mutation: Updating Email => ok-action"))
-  (remote [{:keys [state] :as env}]
-          (let [{:account/keys [email]} (get-in @state robohash-ident)]
+  #_(remote [{:keys [state] :as env}]
+            (let [{:account/keys [email]} (get-in @state robohash-ident)]
             (valid-email? email))))
 
 (comment
-  (comp/transact! SPA [(make-older {:person/id 2})])
+  (comp/transact! SPA [(update-email! {:person/id 2})])
+
+  (com.fulcrologic.fulcro.application/current-state SPA)
+
   )

@@ -48,7 +48,7 @@
   (let [submit!  (fn [evt]
                    (when (or (identical? true evt) (evt/enter-key? evt))
                      (comp/transact! this [(session/signup! {:email email :password password})])
-                     (log/info "Sign up")))
+                     (log/info "Sign up submit! triggered")))
         checked? (log/spy :info (fs/checked? props))]
     (div
       (dom/h3 "Signup")
@@ -145,14 +145,14 @@
   (div :.ui.container.segment
     (h3 "Main")))
 
-(defsc RobohashImage [this {:keys [:account/email] :as props}]
+(defsc RobohashImage [this {:account/keys [email] :as props}]
   {:query             [:account/email fs/form-config-join
                         {[:component/id :session] (comp/get-query Session)}]
    :initial-state     (fn [_]
                           (fs/add-form-config RobohashImage
                                               {:account/email          ""}))
-   :ident             (fn [] session/robohash-ident)
    :form-fields       #{:account/email}
+   :ident             (fn [] session/robohash-ident)
    :componentDidMount (fn [this]
                         (comp/transact! this [(session/clear-robohash-form)]))
    :will-enter        (fn [_ _] (dr/route-immediate [:component/id :settings]))}
@@ -162,9 +162,8 @@
              robohash-image-url (str "https://robohash.org/"  current-user "?set=" "set5")
              submit!  (fn [evt]
                         (when (evt/enter-key? evt)
-                          ;; TODO configure the call site for update-email! correctly
-                          (comp/transact! this [(session/update-email! {:email current-user})])
-                          (log/info "Email change and generate new RoboHash image")))
+                          (comp/transact! this [(session/update-email! {:email email})])
+                          (log/info "Robohash submit! triggered")))
              checked? (log/spy :info (fs/checked? props))]
             (if logged-in?
             (dom/div
@@ -177,14 +176,15 @@
                                     (dom/div current-user)))
                 (dom/hr)
                 (dom/div
-                  :.ui.form
+                  :.ui.form {:classes [(when checked? "error")]}
                   (field {:label         "New Email"
                           :placeholder   "me@domain.xyz"
-                          :value         (or email "")
+                          #_#_:value (or email "")
+                          :value         "abhi18av@yahoo.com"
                           :valid?        (session/valid-email? email)
                           :error-message "Must be an email address"
                           :autoComplete  "off"
-                          #_#_:onKeyDown submit!
+                          :onKeyDown     submit!
                           :onChange      #(m/set-string! this :account/email :event %)})))
               (dom/button :.ui.primary.button {:onClick #(submit! true)} "New Email => New RoboHash!"))
             (dom/div :.ui.card "Please LogIn to view your RoboHash image!"))))

@@ -180,13 +180,15 @@
                   (field {:label         "New Email"
                           :placeholder   "me@domain.xyz"
                           :value         (or email "")
-                          #_#_:value "abhi18av@yahoo.com"
                           :valid?        (session/valid-email? email)
                           :error-message "Must be an email address"
                           :autoComplete  "off"
                           :onKeyDown     submit!
-                          :onChange      #(m/set-string! this :account/email :event %)})))
-              #_(dom/button :.ui.primary.button {:onClick #(submit! true)} "New Email => New RoboHash!"))
+                          :onChange      #(m/set-string! this :account/email :event %)})
+                  (dom/button :.ui.primary.button
+                              #_{:onClick #(js/console.log "Button clicked!")}
+                              {:onClick #(submit! true)}
+                              "New Email => New RoboHash!"))))
             (dom/div :.ui.card "Please LogIn to view your RoboHash image!"))))
 
 (def ui-robohash-image (prim/factory RobohashImage))

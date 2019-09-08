@@ -143,7 +143,8 @@
           (log/info "mutation: update-email! action")
           (swap! state fs/mark-complete* [:component/id :robohash]))
   (ok-action [{:keys [this state]}]
-             (log/info "mutation: Updating Email => ok-action"))
+             (log/info "mutation: Updating Email => ok-action")
+             #_(swap!))
   (remote [{:keys [state] :as env}]
           (let [{:account/keys [email]} (get-in @state robohash-ident)]
             (valid-email? email))))
@@ -153,4 +154,7 @@
 
   (com.fulcrologic.fulcro.application/current-state SPA)
 
+  (swap! SPA assoc-in [:session :account/name] "abhi18av@gmail.com")
+
+  (comp/transact! SPA [(update-email! {:person/id 2})])
   )

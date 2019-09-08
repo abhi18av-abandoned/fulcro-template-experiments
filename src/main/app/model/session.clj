@@ -66,6 +66,9 @@
 ;;;;;;;;;
 
 (comment
+
+  (deref account-database)
+
   (reset! account-database {})
 
   (swap! account-database assoc "abhi18av@outlook.com"  {:email "abhi18av@outlook.com"  :password "password"})

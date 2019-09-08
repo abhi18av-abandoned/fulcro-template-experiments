@@ -84,6 +84,9 @@
 
   (get-in @account-database ["abhi18av@outlook.com" :password])
 
+
+  (swap! account-database dissoc "abhi18av@gmail.com")
+
   (swap! account-database dissoc "abhi18av@gmail.com"  {:email "abhi18av@gmail.com"  :password "password"})
 
   (swap! account-database dissoc "abhi18av@outlook.com"  {:email "new email"  :password "password"}))

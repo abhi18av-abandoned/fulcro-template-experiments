@@ -141,13 +141,16 @@
 (defmutation update-email! [_]
   (action [{:keys [state]}]
           (log/info "mutation: update-email! action")
-          (swap! state fs/mark-complete* [:component/id :robohash]))
+          ;; TODO this is probably the reason why submit button is not working in robohash
+          (swap! state fs/mark-complete* robohash-ident))
   (ok-action [{:keys [this state]}]
              (log/info "mutation: Updating Email => ok-action")
-             #_(swap!))
+             #_(swap! state fs/mark-complete! robohash-ident))
   (remote [{:keys [state] :as env}]
           (let [{:account/keys [email]} (get-in @state robohash-ident)]
-            (valid-email? email))))
+            (valid-email? email)))
+  ;; FIXME update the email in the current session
+  (refresh [env] [:account/name [:component/id :session]]))
 
 (comment
   (comp/transact! SPA [(update-email! {:person/id 2})])

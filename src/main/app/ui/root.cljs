@@ -164,7 +164,8 @@
                         (when (evt/enter-key? evt)
                           (comp/transact! this [(session/update-email! {:new-email email :current-email current-user})])
                           (log/info "Robohash submit! triggered")))
-             checked? (log/spy :info (fs/checked? props))]
+             checked? (log/spy :info (fs/checked? props))
+             dirty? (fs/dirty? props)]
             (if logged-in?
             (dom/div
               :.ui.card
@@ -186,8 +187,8 @@
                           :onKeyDown     submit!
                           :onChange      #(m/set-string! this :account/email :event %)})
                   (dom/button :.ui.primary.button
-                              #_{:onClick #(js/console.log "Button clicked!")}
-                              {:onClick #(submit! true)}
+                              {:onClick #(js/console.log "Button clicked!")}
+                              #_{:onClick #(submit! true)}
                               "New Email => New RoboHash!"))))
             (dom/div :.ui.card "Please LogIn to view your RoboHash image!"))))
 
